@@ -364,7 +364,7 @@ body.m .zwrap{padding:58px 10px 84px}
   if(document.getElementById('mlist')) return;
   var L=document.createElement('div'); L.className='mlist'; L.id='mlist';
   var h='<p class="mhint">Tap a page to read it up close · pinch to zoom<br>Turn your phone sideways for bigger pages</p>';
-  for(var p=1;p<=N;p++) h+='<button type="button" class="mpage" id="mp'+p+'" data-p="'+p+'" aria-label="Read page '+p+'"><span class="mn">'+p+'</span><img src="'+src(p)+'" alt="Portfolio page '+p+'" width="1680" height="1188" decoding="async"'+(p<=2?'':' loading="lazy"')+'><span class="mtap"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14M7 5v4M5 7h4"/></svg>read</span></button>';
+  for(var p=1;p<=N;p++) h+='<button type="button" class="mpage" id="mp'+p+'" data-p="'+p+'" aria-label="Read page '+p+'"><span class="mn">'+p+'</span><img src="'+src(p)+'" alt="Portfolio page '+p+'" width="1680" height="1188" decoding="async"'+(p<=2?'':' loading="lazy"')+'></button>';
   h+='<div class="mend"><button type="button" class="restart" id="mtop"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4.5h4.5"/></svg><span>take another look</span></button></div>';
   L.innerHTML=h; document.getElementById('app').appendChild(L);
   document.getElementById('mtop').onclick=function(){ window.scrollTo({top:0,behavior:'smooth'}); };
