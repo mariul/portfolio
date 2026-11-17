@@ -2,7 +2,7 @@
 
 A flip-through version of my A3 architecture portfolio (TU/e, Architecture, Urbanism and Building Sciences).
 
-**Live site:** https://YOUR-USERNAME.github.io/portfolio/ *(update after publishing)*
+**Live site:** https://mariul.github.io/portfolio/
 
 ## What's inside
 
