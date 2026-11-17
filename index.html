@@ -231,7 +231,7 @@ body.m .zwrap{padding:58px 10px 84px}
 
   
   <div class="view" role="group" aria-label="View"><button type="button" data-v="single" aria-pressed="false"><img src="view_page.png" alt=""><span>one page</span></button><button type="button" data-v="double" aria-pressed="false"><img src="view_book.png" alt=""><span>booklet</span></button></div>
-  <p class="hint">Click or swipe the pages to turn them · arrow keys work too</p>
+  <p class="hint">Click or swipe to turn pages · double-click a page to zoom in · arrow keys work too</p>
  </nav>
 </div>
 <div class="folder" id="folder">
@@ -282,8 +282,8 @@ body.m .zwrap{padding:58px 10px 84px}
    L.addEventListener('transitionend',function(e){ if(e.propertyName==='transform') this.classList.remove('turning'); });
    book.appendChild(L); leaves.push(L);
   }
-  var hl=document.createElement('button'); hl.className='hit l'; hl.type='button'; hl.setAttribute('aria-label','Previous page'); hl.onclick=prev;
-  var hr=document.createElement('button'); hr.className='hit r'; hr.type='button'; hr.setAttribute('aria-label','Next page'); hr.onclick=next;
+  var hl=document.createElement('button'); hl.className='hit l'; hl.type='button'; hl.setAttribute('aria-label','Previous page'); hl.onclick=function(e){ clickTurn(e,prev); }; hl.ondblclick=dblZoom;
+  var hr=document.createElement('button'); hr.className='hit r'; hr.type='button'; hr.setAttribute('aria-label','Next page'); hr.onclick=function(e){ clickTurn(e,next); }; hr.ondblclick=dblZoom;
   book.appendChild(hl); book.appendChild(hr);
   var rb=document.createElement('button'); rb.type='button'; rb.className='restart bcbtn'; rb.id='bcbtn'; rb.setAttribute('aria-label','Take another look'); rb.title='Take another look'; rb.hidden=true; rb.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4.5h4.5"/></svg><span>take another look</span>'; rb.onclick=function(){ goPage(1,false); }; book.appendChild(rb);
   goPage(target,true);
@@ -373,7 +373,18 @@ body.m .zwrap{padding:58px 10px 84px}
   if(io) L.querySelectorAll('.mpage').forEach(function(b){ io.observe(b); });
   if(page>1){ var t=document.getElementById('mp'+page); if(t) setTimeout(function(){ t.scrollIntoView(); },60); }
  }
- function mOpen(p,fx,fy){ cur=p-1; if(zd.showModal) zd.showModal(); zs=1; zRefresh(false);
+ var ct=null;
+ function clickTurn(e,fn){ if(e.detail>1) return; clearTimeout(ct); ct=setTimeout(fn, e.detail===1?230:0); }
+ function pageAt(cx,cy){ var r=book.getBoundingClientRect(); if(cx<r.left||cx>r.right||cy<r.top||cy>r.bottom) return null;
+  var p,x0,w; if(mode==='double'){ var mid=r.left+r.width/2; w=r.width/2; if(cx>=mid){ p=cur===0?1:cur*2+1; x0=mid; } else { p=cur*2; x0=r.left; } } else { p=cur+1; x0=r.left; w=r.width; }
+  if(!p||p>N) return null; return {p:p,fx:(cx-x0)/w,fy:(cy-r.top)/r.height}; }
+ function dblZoom(e){ clearTimeout(ct); e.preventDefault(); var a=pageAt(e.clientX,e.clientY); if(a) zoomAt(a.p,a.fx,a.fy,2.6); }
+ book.addEventListener('wheel',function(e){ if(!(e.ctrlKey||e.metaKey)||e.deltaY>=0||document.body.classList.contains('m')) return; e.preventDefault(); if(zd.open) return; var a=pageAt(e.clientX,e.clientY); if(a) zoomAt(a.p,a.fx,a.fy,2); },{passive:false});
+ function zoomAt(p,fx,fy,z){ if(zd.showModal&&!zd.open) zd.showModal(); zs=1; zRefresh(false);
+  var im=zin.querySelector('img[alt^="Portfolio page '+p+',"]')||zin.querySelector('img');
+  function go(){ var r=im.getBoundingClientRect(); var cx=r.left+fx*r.width, cy=r.top+fy*r.height; setZ(z,cx,cy); var w=zw.getBoundingClientRect(); zw.scrollLeft+=cx-(w.left+w.width/2); zw.scrollTop+=cy-(w.top+w.height/2); }
+  if(im.complete&&im.naturalWidth) go(); else im.addEventListener('load',go,{once:true}); }
+ function mOpen(p,fx,fy){ cur=p-1; zoomAt(p,fx,fy,2.6); return;
   var im=zin.querySelector('img'); function go(){ var r=im.getBoundingClientRect(); var cx=r.left+fx*r.width, cy=r.top+fy*r.height; setZ(2.6,cx,cy); var w=zw.getBoundingClientRect(); zw.scrollLeft+=cx-(w.left+w.width/2); zw.scrollTop+=cy-(w.top+w.height/2); }
   if(im.complete&&im.naturalWidth) go(); else im.addEventListener('load',go,{once:true}); }
  function goPage(p,instant){ if(document.body.classList.contains('m')){ var el=document.getElementById('mp'+p); if(el) el.scrollIntoView({behavior:instant?'auto':'smooth',block:'start'}); return; } var n=leafFor(Math.max(1,Math.min(N,p))); if(instant){cur=Math.max(0,Math.min(n, maxCur())); apply(true);} else turnTo(n); }
