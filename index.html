@@ -308,7 +308,7 @@ body.m .zwrap{padding:58px 10px 84px}
  function closedT(extra){
   var pw=parseFloat(book.style.width)/(mode==='double'?2:1), ph=parseFloat(book.style.height);
   var closed = mode==='double' && cur===0;
-  var k = closed? Math.min(0.62, stage.clientWidth*0.5/pw, stage.clientHeight*0.62/ph) : 1;
+  var k = 1;
   k*=extra; var shift = !closed? 0 : (cur===0? -pw/2 : pw/2)*k;
   if(mode!=='double'){ shift=0; }
   return 'translateX('+shift+'px) scale('+k+')';
