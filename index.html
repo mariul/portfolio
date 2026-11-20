@@ -261,6 +261,7 @@ body.m .zwrap{padding:58px 10px 84px}
  var mode=null, leaves=[], cur=0; // cur = number of flipped leaves
  var page=1; try{var h=parseInt((location.hash||'').replace('#p',''),10); if(h>=1&&h<=N) page=h;}catch(e){}
  function img(p){ if(!p||p>N) return '<div class="face blank"></div>'; return '<img src="'+src(p)+'" alt="Portfolio page '+p+'" decoding="async"'+(p<=5?'':' loading="lazy"')+'>'; }
+ function alignTitle(bw){ var h1=document.querySelector('header h1'); if(!h1) return; h1.style.marginLeft='0px'; if(bw==null) return; var sr=stage.getBoundingClientRect(), hr=h1.getBoundingClientRect(); h1.style.marginLeft=Math.max(0, Math.round(sr.left+(stage.clientWidth-bw)/2-hr.left))+'px'; }
  function build(){
   if(isMobile()){ buildMobile(); return; } if(document.body.classList.contains('m')){ document.body.classList.remove('m'); var ml=document.getElementById('mlist'); if(ml) ml.remove(); }
   var w=stage.clientWidth, hgt=stage.clientHeight; var m=forced||((w<720||w/hgt<1.15)?'single':'double');
@@ -268,7 +269,7 @@ body.m .zwrap{padding:58px 10px 84px}
   if(m==='double'){ pw=Math.min(w*0.995/2, hgt*0.995/AR); } else { pw=Math.min(w*0.995, hgt*0.995/AR); }
   ph=pw*AR;
   var target=page; mode=m;
-  book.className='book '+m; book.style.width=(m==='double'?2*pw:pw)+'px'; book.style.height=ph+'px';
+  book.className='book '+m; book.style.width=(m==='double'?2*pw:pw)+'px'; book.style.height=ph+'px'; alignTitle(m==='double'?2*pw:pw);
   book.innerHTML=''; leaves=[];
   var plan=[];
   if(m==='double'){ for(var j=0;2*j+2<=N;j++) plan.push([2*j+1,2*j+2]); if(N%2) plan.push([N,'BC']); else plan.push([0,'BC']); }
@@ -360,7 +361,7 @@ body.m .zwrap{padding:58px 10px 84px}
   for(var i=lo;i<hi;i++){ var L=leaves[i]; L.classList.add('turning'); if(mode==='double'&&!many){ L.classList.remove('peelF','peelB'); void L.offsetWidth; L.classList.add(fwd?'peelF':'peelB'); L.addEventListener('animationend',function h(){ this.classList.remove('peelF','peelB','turning'); this.removeEventListener('animationend',h); }); } }
   cur=n; apply(false); preload(); }
  function isMobile(){ try{ return matchMedia('(max-width:720px), (max-height:500px) and (pointer:coarse)').matches; }catch(e){ return innerWidth<=720; } }
- function buildMobile(){ document.body.classList.add('m'); mode='single';
+ function buildMobile(){ document.body.classList.add('m'); mode='single'; alignTitle();
   if(document.getElementById('mlist')) return;
   var L=document.createElement('div'); L.className='mlist'; L.id='mlist';
   var h='<p class="mhint">Tap a page to read it up close · pinch to zoom<br>Turn your phone sideways for bigger pages</p>';
