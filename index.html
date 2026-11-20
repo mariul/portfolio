@@ -269,7 +269,7 @@ body.m .zwrap{padding:58px 10px 84px}
   if(m==='double'){ pw=Math.min(w*0.995/2, hgt*0.995/AR); } else { pw=Math.min(w*0.995, hgt*0.995/AR); }
   ph=pw*AR;
   var target=page; mode=m;
-  book.className='book '+m; book.style.width=(m==='double'?2*pw:pw)+'px'; book.style.height=ph+'px'; alignTitle(m==='double'?2*pw:pw);
+  book.className='book '+m; book.style.width=(m==='double'?2*pw:pw)+'px'; book.style.height=ph+'px'; alignTitle(2*Math.min(w*0.995/2, hgt*0.995/AR));
   book.innerHTML=''; leaves=[];
   var plan=[];
   if(m==='double'){ for(var j=0;2*j+2<=N;j++) plan.push([2*j+1,2*j+2]); if(N%2) plan.push([N,'BC']); else plan.push([0,'BC']); }
